@@ -1,0 +1,57 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class playerController : MonoBehaviour {
+
+	public float moveSpeed;
+	public float jumpHeight;
+	public Rigidbody2D playerRB;
+
+	private int hpPlayer;
+	public float warmthPlayer = 100f;
+	public float hungerPlayer = 100f;
+
+	public GameObject[] inventoryPlayer;
+
+
+	public int HpPlayer {
+
+		get
+		{ 
+			return hpPlayer;
+		}
+		set
+		{ 
+			hpPlayer = value;
+		}
+
+	}
+
+	// Use this for initialization
+	void Start () {
+		playerRB = GetComponent<Rigidbody2D> ();
+	}
+	
+
+
+	void FixedUpdate(){
+
+		moveCharacter ();
+
+	}
+
+	void moveCharacter(){
+
+		if (Input.GetKey (KeyCode.D))
+			playerRB.AddForce (transform.right * moveSpeed);
+
+		if (Input.GetKey (KeyCode.A))
+			playerRB.AddForce (transform.right * -moveSpeed);
+
+		if (Input.GetKeyDown (KeyCode.Space))
+			playerRB.AddForce (transform.up * jumpHeight);
+	}
+
+
+}
