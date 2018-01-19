@@ -1,0 +1,42 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
+
+public class enemyScript : MonoBehaviour {
+
+	[SerializeField] private float enemyHP = 3f; 
+
+	public float test;
+
+	// Use this for initialization
+	void Start () {
+		
+	}
+	
+	// Update is called once per frame
+	void Update () {
+
+		if (enemyHP <= 0) {
+			DestroyObject (this.gameObject);
+		}
+
+	}
+
+	public void takeDamage (int dmg){
+		enemyHP = enemyHP - dmg;
+	}
+
+	void OnCollisionEnter2D(Collision2D collisionInfo){
+
+
+		if (collisionInfo.gameObject.tag.Equals("Player")) {
+			takeDamage (1);
+
+			Debug.Log(collisionInfo.collider.name);
+		}
+		Destroy (this.gameObject);
+
+
+	}
+}
