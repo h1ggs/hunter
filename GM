@@ -1,0 +1,37 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class GameManager : MonoBehaviour {
+
+	public static GameManager instance = null;
+	//private BoardManager boardScript;
+	private int level = 1;
+
+	public Text hpText;
+
+	playerController myPlayer = new playerController ();
+
+	void Awake(){
+	
+		if (instance == null)
+			instance = this;
+		else if (instance != this)
+			Destroy (gameObject);
+
+		DontDestroyOnLoad (gameObject);
+	
+	}
+	// Use this for initialization
+	void Start () {
+
+
+		myPlayer.HpPlayer = 100;
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		hpText.text = ("HP: " + myPlayer.HpPlayer);
+	}
+}
