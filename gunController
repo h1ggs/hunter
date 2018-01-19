@@ -1,0 +1,149 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class gunController : MonoBehaviour {
+
+	public float fireRate;
+	public Rigidbody2D bullet;
+
+	public GameObject endofLine;
+	public LineRenderer laserLineTrace;
+	public Transform muzzleEnd;
+	public float bulletSpeed;
+	public Vector2 bulletSpeed2 = new Vector2(100,0);
+
+	private Vector3 gunRotation;
+
+	public GameObject bulletPrefab;
+	public Transform bulletSpawn;
+
+	private float c_raycast_distance = Mathf.Infinity;
+	public LayerMask objects_to_hit; 
+	public GameObject gunSprite;
+	private float someScale;
+
+	void Awake(){
+
+	}
+
+	// Use this for initialization
+	void Start () {
+		Cursor.visible = false;
+
+		//holds scale to flip Sprite depending on facing direction
+		someScale = transform.localScale.y;
+
+	}
+	
+	// Update is called once per frame
+	void Update () {
+
+		//This locates the mouse cursor position and puts the crosshair at that point
+		Vector3 crosshairLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		crosshairLocation.z = 0;
+		endofLine.transform.position = crosshairLocation;
+
+		//This draws the LineRenderer to start from the gun's muzzle to the endOfLine object
+		Vector3 lineBegin = new Vector3(muzzleEnd.transform.position.x, muzzleEnd.transform.position.y, 0);
+		laserLineTrace.SetPosition (0, lineBegin);
+		laserLineTrace.SetPosition (1, endofLine.transform.position);
+
+		if (Input.GetKeyDown (KeyCode.Mouse0)) {
+			fireGun ();
+		}	
+
+	}
+
+	void FixedUpdate(){
+
+		//This gets the mouse cursor position relative to the screen
+		Vector3 dir = Input.mousePosition - Camera.main.WorldToScreenPoint (transform.position);
+
+		//Passes mouse direction to aim Method
+		aimGun (dir);
+
+		//Another Mouse POS
+		Vector3 mouseCursorLocation = dir;
+		//Player POS
+		Vector2 playerLocation = GameObject.Find ("Player").transform.position;
+	
+	}
+
+	void aimGun(Vector3 dir){
+		
+		//This aims the gun
+		float angle = Mathf.Atan2 (dir.y, dir.x) * Mathf.Rad2Deg;
+		this.gameObject.transform.rotation = Quaternion.AngleAxis (angle, Vector3.forward);
+
+		if (gameObject.transform.eulerAngles.z < 360 && transform.eulerAngles.z > 270) {
+			Debug.Log ("greater than -90, less than zero");
+		}
+
+		if (gameObject.transform.eulerAngles.z < 90 || gameObject.transform.eulerAngles.z < 360 && transform.eulerAngles.z > 270 ) {
+			transform.localScale = new Vector2 (transform.localScale.x, someScale);
+		} else {
+			transform.localScale = new Vector2 (transform.localScale.x, -someScale);
+		}
+			
+	}
+		
+
+	void fireGun(){
+			
+		fireEvent ();
+
+	}
+
+	void fireEvent(){
+
+		//Get gun and mouse positions.
+		Vector2 mouse_position = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+		Vector2 gun_muzzle_position = new Vector2(get_gun_muzzle_transform().position.x, get_gun_muzzle_transform().position.y);
+
+		//Create direction vector
+		Vector2 direction_vector = calculate_directional_vector(mouse_position, gun_muzzle_position);
+
+		/*  ==========
+                User Info
+
+                This is a possible location for triggering a recoil animation for the gun.
+                ==========
+            */
+
+		//Draw a raycast from the gun along the direction vector.
+		RaycastHit2D hit = Physics2D.Raycast(gun_muzzle_position, direction_vector, c_raycast_distance, objects_to_hit);
+		Debug.DrawRay(gun_muzzle_position, direction_vector);
+
+		var bullet = (GameObject)Instantiate (
+			bulletPrefab,
+			bulletSpawn.position,
+			bulletSpawn.rotation);
+	}
+
+	//SET MUZZLE TRANSFORM
+	public void set_gun_muzzle_transform(Transform trans)
+	{
+		if (trans)
+		{
+			muzzleEnd = trans;
+		}
+	}
+
+	//RETURNS THE MUZZLE TRANSFORM
+	public Transform get_gun_muzzle_transform()
+	{
+		return muzzleEnd;
+	}
+
+	Vector2 calculate_directional_vector(Vector2 v_mouse_position, Vector2 v_gun_muzzle_position)
+	{
+
+		//Creating direction vector.
+		Vector2 v_dir = v_mouse_position - v_gun_muzzle_position;
+
+		return v_dir;
+	}
+
+
+}
