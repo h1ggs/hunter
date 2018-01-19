@@ -1,0 +1,70 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
+
+public class bulletScript : MonoBehaviour {
+
+	public Rigidbody2D rb;
+	public float thrust;
+	public GameObject target;
+	public float dropBulletTime;
+
+	void Awake(){
+	}
+
+	// Use this for initialization
+	void Start () {
+
+		//Subtract the bullet's transform from the muzzleEnd, then normalize and multiply thrust.
+		rb = GetComponent<Rigidbody2D> ();
+		rb.AddForce ((GameObject.Find("lineEnd").GetComponent<Transform>().position - transform.position).normalized *  thrust);
+		StartCoroutine (changeGravityBullet ());
+
+
+		//target.transform.position = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+
+	}
+
+	// Update is called once per frame
+	void Update () {
+
+
+
+		//float step = thrust * Time.deltaTime;
+		//transform.position = Vector2.MoveTowards (transform.position, target.transform.position, step);
+		//GameObject.Find("Gun").GetComponent<gunController>().get
+
+
+	}
+
+	void FixedUpdate(){
+	
+
+		transform.right = rb.velocity;
+	
+	}
+
+	public IEnumerator changeGravityBullet(){
+	
+		rb.gravityScale = 0;
+		yield return new WaitForSeconds (dropBulletTime);
+		rb.gravityScale = 2;
+	
+	}
+
+	void OnCollisionEnter2D(Collision2D collisionInfo){
+
+
+		if (collisionInfo.gameObject.tag.Equals("Enemy")) {
+			collisionInfo.gameObject.GetComponent<enemyScript> ().takeDamage (1);
+			playerController.
+			Debug.Log(collisionInfo.collider.name);
+		}
+		Destroy (this.gameObject);
+
+
+	}
+
+
+}
