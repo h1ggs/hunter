@@ -1,0 +1,17 @@
+	void fireGun(Vector3 dir)
+	{
+		
+		RaycastHit2D hit = Physics2D.Raycast (muzzleEnd.position, dir - muzzleEnd.position, Mathf.Infinity);
+		Debug.DrawRay (muzzleEnd.position, dir - muzzleEnd.position, Color.green, 5);
+
+		if (hit.collider != null) {
+			if (hit.transform.CompareTag ("Enemy")) {
+				Damageable dm = hit.transform.GetComponent<Damageable> ();
+				dm.sendDamageToParent ();
+				Debug.Log (hit.transform.name);
+
+			}
+		}
+
+		//fireEvent ();
+	}
