@@ -1,0 +1,24 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Damageable : MonoBehaviour {
+
+	private enemyScript parentObj;
+	public int damageAmount;
+
+	// Use this for initialization
+	void Start () {
+		parentObj = this.GetComponentInParent<enemyScript> ();	
+		Debug.Log (parentObj.bodyParts [1]);
+	}
+
+	public void sendDamageToParent(){
+		parentObj.takeDamage (damageAmount);
+	}
+
+	// Update is called once per frame
+	void Update () {
+		
+	}
+}
